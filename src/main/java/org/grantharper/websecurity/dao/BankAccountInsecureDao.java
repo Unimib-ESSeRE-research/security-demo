@@ -1,5 +1,7 @@
 package org.grantharper.websecurity.dao;
 
+import java.util.regex.Pattern;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Transactional
 public class BankAccountInsecureDao {
+
+	// Pattern to validate only letters (uppercase and lowercase)
+	private static final Pattern VALID_PATTERN = Pattern.compile("^[a-zA-Z]+$");
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -27,16 +32,35 @@ public class BankAccountInsecureDao {
 	//hack '; drop table customer; --
 	//this will delete the customer table from the database
 	//'; update bank_account set balance=999999999 where customer_id=1; --
-	public void updateCustomerName(String firstName, String lastName, String username){
+	public void updateCustomerName(String firstName, String lastName, String username) throws IllegalArgumentException{
+
 		StringBuilder queryBuilder = new StringBuilder("UPDATE customer SET first_name='");
-		queryBuilder.append(firstName);
-		queryBuilder.append("', last_name='");
-		queryBuilder.append(lastName);
-		queryBuilder.append("' WHERE username='");
-		queryBuilder.append(username);
-		queryBuilder.append("';");
+
+		if (isValid(firstName) && isValid(lastName) && isValid(username)) {
+
+			queryBuilder.append(firstName);
+			queryBuilder.append("', last_name='");
+			queryBuilder.append(lastName);
+			queryBuilder.append("' WHERE username='");
+			queryBuilder.append(username);
+			queryBuilder.append("';");
+
+		} else {
+			throw new IllegalArgumentException("Invalid input");
+		}
+
 		
 		jdbcTemplate.execute(queryBuilder.toString());
+	}
+
+	/**
+	 * Checks if the string contains only letters (a-z, A-Z).
+	 * 
+	 * @param input The string to check
+	 * @return true if valid, false otherwise
+	 */
+	private static boolean isValid(String input) {
+		return VALID_PATTERN.matcher(input).matches();
 	}
 	
 }
