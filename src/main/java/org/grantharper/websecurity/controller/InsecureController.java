@@ -41,7 +41,6 @@ public class InsecureController {
 	public String updateCustomerName(Model model, HttpServletRequest request) {
 		String firstName = (String) request.getParameter("firstName");
 		String lastName = (String) request.getParameter("lastName");
-		log.debug("entered the param controller with firstName=" + firstName + " and lastName=" + lastName);
 		String username = request.getUserPrincipal().getName();
 		bankAccountService.updateCustomerNameInsecure(username, firstName, lastName);
 
@@ -51,7 +50,6 @@ public class InsecureController {
 	@RequestMapping(value = "/customer/account/{accountId}/deposit", method = RequestMethod.POST)
 	public String performCustomerDeposit(Model model, @PathVariable("accountId") String accountId,
 			HttpServletRequest request) {
-		log.debug("depositing into accountId=" + accountId + " amount=" + request.getParameter("amount"));
 		Double depositAmount = Double.valueOf(request.getParameter("amount"));
 
 		bankAccountService.depositInsecure(Long.valueOf(accountId), depositAmount);
@@ -67,7 +65,6 @@ public class InsecureController {
 	
 	@RequestMapping(value = "/employee/customer/{customerId}/account/{accountId}/close", method = RequestMethod.POST)
 	public String closeCustomerAccount(@PathVariable("accountId") String accountId, @PathVariable("customerId") String customerId) {
-	  log.info("closing customer account for customerId=" + customerId + ", accountId=" + accountId);
 	  bankAccountService.closeAccount(Long.valueOf(accountId));
 	  return "redirect:/employee/customer/{customerId}";
 	}
@@ -98,7 +95,6 @@ public class InsecureController {
 
 	@RequestMapping(value = "/receive-hack", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Object> receiveHack(HttpServletRequest request) {
-		log.info("hack sent account details: " + request.getParameter("accountInfo"));
 		String accountInfo = request.getParameter("accountInfo");
 		try {
 			OutputStreamWriter os = new FileWriter("hack-output.txt", true);

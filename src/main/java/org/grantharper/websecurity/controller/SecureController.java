@@ -57,7 +57,6 @@ public class SecureController {
 			}
 		}
 		
-		log.debug("entered the param controller with firstName=" + customer.getFirstName() + " and lastName=" + customer.getLastName());
 
 		String username = request.getUserPrincipal().getName();
 		bankAccountService.updateCustomerName(username, customer.getFirstName(), customer.getLastName());
@@ -68,7 +67,6 @@ public class SecureController {
 	@RequestMapping(value = "/customer/account/{accountId}/deposit", method = RequestMethod.POST)
 	public String performCustomerDeposit(Model model, @PathVariable("accountId") String accountId,
 			@RequestParam("amount") Double amount) {
-		log.debug("depositing into accountId=" + accountId + " amount=" + amount);
 		
 		bankAccountService.depositSecure(Long.valueOf(accountId), amount);
 		return "redirect:/customer/account/" + accountId;
